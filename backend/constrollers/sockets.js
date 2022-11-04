@@ -6,14 +6,14 @@ const connectUser = async (uid) => {
   const filter = { _id: uid };
   const update = { online: true };
 
-  await ChatUser.findOneAndUpdate(filter, update);
+  return await ChatUser.findOneAndUpdate(filter, update, { new: true });
 };
 
 const disconnectUser = async (uid) => {
   const filter = { _id: uid };
   const update = { online: false, lastActive: dayjs() };
 
-  await ChatUser.findOneAndUpdate(filter, update);
+  return await ChatUser.findOneAndUpdate(filter, update, { new: true });
 };
 const getUsers = async () => {
   const users = await ChatUser.find().sort("-online");

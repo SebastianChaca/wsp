@@ -26,16 +26,21 @@ class Sockets {
         return socket.disconnect();
       }
       // actualizo la db en el campo online
-      await connectUser(uid);
+      const status = await connectUser(uid);
+      //me conecto al socker
       socket.join(uid);
+      //busco lista de amigos
+      const friends = await getFriends(uid);
 
-      //emitir a todos los usuarios conectados
-      this.io.to(uid).emit("friend-list", await getFriends(uid));
+      const friendsIds = friends.map((friend) => friend.user._id.valueOf());
+      //emitir lista de amigos
+      this.io.to(uid).emit("friend-list", friends);
+      //emitir a mis amigos que me conecte
+      this.io.to(friendsIds).emit("friend-status", {
+        uid: status._id.valueOf(),
+        online: status.online,
+      });
 
-      //agregar a mi lista de amigos
-      // socket.on("add-friend", async (email) => {
-      //   this.io.to(uid).emit("add-friend", await addFriend(uid, email));
-      // });
       //escuchar si estan escribiendo
       socket.on("typing", (payload) => {
         if (payload.message.length > 0) {
@@ -66,10 +71,11 @@ class Sockets {
       socket.on("disconnect", async () => {
         console.log("desconectado");
         // actualizo la db en el campo online
-        await disconnectUser(uid);
-        //emitir a todos los usuarios conectados
-        //TODO: emitir a todos los amigos
-        this.io.to(uid).emit("user-list", await getFriends(uid));
+        const status = await disconnectUser(uid);
+        this.io.to(friendsIds).emit("friend-status", {
+          uid: status._id.valueOf(),
+          online: status.online,
+        });
       });
     });
   }

@@ -14,16 +14,17 @@ const SidebarEvents = ({ children }: Props) => {
   //lista de amigos
   useEffect(() => {
     socket?.on("friend-list", (friends: friend[]) => {
+      console.log(friends);
       dispatch(setFriendsList(friends));
     });
   }, [socket, dispatch, uid]);
 
-  // useEffect(() => {
-  //   socket?.on("add-friend", (friend) => {
-  //     //dispatch
-  //     console.log(friend);
-  //   });
-  // }, [socket]);
+  useEffect(() => {
+    socket?.on("friend-status", (friend) => {
+      //TODO: dispatch de update de estado de user
+      console.log(friend);
+    });
+  }, [socket]);
 
   return <>{children}</>;
 };
