@@ -3,6 +3,7 @@ import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import {
   setIsTyping,
   setMessages,
+  updateNotifications,
   updateSeenMessages,
 } from "../../redux/chat/chatSlice";
 import { useSocketContext } from "../SocketContext/SocketContext";
@@ -26,20 +27,22 @@ const MessageEvents = ({ children }: Props) => {
   useEffect(() => {
     socket?.on("personal-message", (message: serverMessageResponse) => {
       const sanitMsg = sanitizeMessage(message);
+      //si esta en el active chat lo sumo al array de mensajes
+      //sino seteo notificacion
+
       dispatch(setMessages(sanitMsg));
+
+      dispatch(updateNotifications(sanitMsg));
     });
   }, [socket, dispatch]);
 
   //marco si el usuario esta escribiendo un mensaje
   useEffect(() => {
     socket?.on("typing", (message: serverMessageResponse) => {
-      //pasar esta condicion al reducer
-      if (activeChat.uid === message.to || activeChat.uid === message.from) {
-        if (message.message.length > 0) {
-          dispatch(setIsTyping(true));
-        } else {
-          dispatch(setIsTyping(false));
-        }
+      if (message) {
+        dispatch(setIsTyping(message));
+      } else {
+        dispatch(setIsTyping(false));
       }
     });
   }, [socket, dispatch, activeChat.uid]);

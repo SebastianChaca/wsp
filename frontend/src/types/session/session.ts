@@ -23,7 +23,7 @@ export interface friend {
   user: user;
   notifications: number;
   status: number;
-  _id: string;
+  uid: string;
 }
 
 export interface friendsAPIResponse {

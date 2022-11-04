@@ -16,7 +16,7 @@ const ChatTopBar = () => {
       h={"80px"}
       position={"absolute"}
       top={0}
-      w="70%"
+      w="100%"
       bg="#E2E8F0"
     >
       <Flex alignItems={"start"} justifyContent="left">

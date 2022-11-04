@@ -22,19 +22,25 @@ interface Props {
   isOpen: boolean;
   onClose(): void;
 }
+interface initial {
+  email: string | null;
+}
 const AddFriendModal = ({ isOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsloading] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
   const validationSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid email").required("Required"),
+    email: Yup.string().email("Invalid email").required("Required").nullable(),
   });
   useEffect(() => {
     if (ref.current) {
       ref.current.focus({ preventScroll: true });
     }
   }, []);
+  const initialValue: initial = {
+    email: null,
+  };
   return (
     <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={ref}>
       <ModalOverlay />
@@ -44,12 +50,12 @@ const AddFriendModal = ({ isOpen, onClose }: Props) => {
         <ModalBody>
           <Formik
             validateOnMount={false}
-            initialValues={{ email: "" }}
+            initialValues={initialValue}
             onSubmit={async (values) => {
               try {
                 setIsloading(true);
                 setError(null);
-                const friend = await addFriendd({ email: values.email });
+                const friend = await addFriendd({ email: values.email! });
                 const { name, email, uid, online, lastActive } = friend.user;
                 dispatch(addFierndToList(friend));
                 onClose();

@@ -13,9 +13,9 @@ const Messages = () => {
 
   return (
     <Box
-      h={"100%"}
+      h={"calc(100%-80px)"}
       overflow="auto"
-      padding=" 30px 15px 90px 25px"
+      padding=" 0px 15px 90px 25px"
       sx={{
         "&::-webkit-scrollbar": {
           width: "16px",

@@ -3,7 +3,10 @@ import Avatar from "../../../Avatar/Avatar";
 
 import LastMessage from "./LastMessage";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { setActiveChat } from "../../../../redux/chat/chatSlice";
+import {
+  resetNotifications,
+  setActiveChat,
+} from "../../../../redux/chat/chatSlice";
 import { friend } from "../../../../types/session/session";
 
 interface Props {
@@ -27,6 +30,7 @@ const SidebarItem = ({ friend }: Props) => {
         lastActive,
       })
     );
+    dispatch(resetNotifications({ uid }));
   };
   return (
     //TODO: re hacer este layout

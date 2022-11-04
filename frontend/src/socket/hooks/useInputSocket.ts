@@ -15,11 +15,7 @@ const useInputSocket = (message: string) => {
     };
   }, [message, uid, activeChat.uid]);
   const setTypingEvent = useCallback(() => {
-    if (message) {
-      socket?.emit("typing", msg);
-    } else {
-      socket?.emit("typing", msg);
-    }
+    socket?.emit("typing", msg);
   }, [message, msg, socket]);
 
   const submitEvent = useCallback(() => {

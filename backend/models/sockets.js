@@ -30,7 +30,7 @@ class Sockets {
       socket.join(uid);
 
       //emitir a todos los usuarios conectados
-      this.io.emit("friend-list", await getFriends(uid));
+      this.io.to(uid).emit("friend-list", await getFriends(uid));
 
       //agregar a mi lista de amigos
       // socket.on("add-friend", async (email) => {
@@ -38,13 +38,17 @@ class Sockets {
       // });
       //escuchar si estan escribiendo
       socket.on("typing", (payload) => {
-        this.io.to(payload.to).emit("typing", payload);
+        if (payload.message.length > 0) {
+          this.io.to(payload.to).emit("typing", payload);
+        } else {
+          this.io.to(payload.to).emit("typing", false);
+        }
       });
 
       //marcar mensajes como vistos
       socket.on("seen-messages", async (payload) => {
         const updateMessages = await updateSeenMessages(payload);
-
+        //mandar ultimo mensaje
         // marcar mensajes como vistos y mandarlos al front
         this.io.to(payload[0].from).emit("seen-messages", updateMessages);
       });
@@ -64,7 +68,8 @@ class Sockets {
         // actualizo la db en el campo online
         await disconnectUser(uid);
         //emitir a todos los usuarios conectados
-        this.io.emit("user-list", await getFriends(uid));
+        //TODO: emitir a todos los amigos
+        this.io.to(uid).emit("user-list", await getFriends(uid));
       });
     });
   }

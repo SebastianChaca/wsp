@@ -12,20 +12,14 @@ const connectUser = async (uid) => {
 const disconnectUser = async (uid) => {
   const filter = { _id: uid };
   const update = { online: false, lastActive: dayjs() };
-  try {
-    await ChatUser.findOneAndUpdate(filter, update);
-  } catch (error) {
-    res.json({
-      ok: false,
-      msg: "error",
-    });
-  }
+
+  await ChatUser.findOneAndUpdate(filter, update);
 };
 const getUsers = async () => {
   const users = await ChatUser.find().sort("-online");
 
   return users;
-  //cambiar el sort para traerlos por ultimos mensajes
+  //TODO:cambiar el sort para traerlos por ultimos mensajes
 };
 
 const saveMessage = async (payload) => {

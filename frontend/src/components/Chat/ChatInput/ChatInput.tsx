@@ -12,7 +12,7 @@ const ChatInput = () => {
   useEffect(() => {
     setMessage("");
     inputRef.current?.focus();
-  }, [activeChat]);
+  }, [activeChat.uid]);
 
   useEffect(() => {
     //marcar mensaje como visto

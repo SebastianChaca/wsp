@@ -36,10 +36,25 @@ export const chatSlice = createSlice({
         state.activeChat.uid === action.payload.from
       ) {
         state.messages.push(action.payload);
+      } else {
+        //TODO: si el mensaje no esta en active chat chequear si son amigos
+        //si lo son agrego notificacion
+        //si no son lo agrego a amigos con status 0 (requested)
+        //primero en la lista y con notificacion
+        //console.log(action.payload);
       }
     },
-    setIsTyping: (state, action: PayloadAction<boolean>) => {
-      state.activeChat.isTyping = action.payload;
+    setIsTyping: (state, action) => {
+      if (action.payload) {
+        if (
+          state.activeChat.uid === action.payload.to ||
+          state.activeChat.uid === action.payload.from
+        ) {
+          state.activeChat.isTyping = true;
+        }
+      } else {
+        state.activeChat.isTyping = false;
+      }
     },
     updateSeenMessages: (state, action) => {
       const elementsToDelete = action.payload.length;
@@ -49,7 +64,32 @@ export const chatSlice = createSlice({
       const newArr = state.messages.concat(action.payload);
       state.messages = newArr;
     },
-    updateNotifications: (state, action) => {},
+    updateNotifications: (state, action: PayloadAction<messageUI>) => {
+      if (action.payload.from !== state.activeChat.uid) {
+        if (state.friends?.length! > 0) {
+          state.friends!.forEach((friend) => {
+            if (action.payload.from === friend.user.uid) {
+              console.log(friend);
+              return (friend.notifications += 1);
+            } else {
+              return friend;
+            }
+          });
+        }
+      }
+    },
+    resetNotifications: (
+      state,
+      action: PayloadAction<{ uid: string | null }>
+    ) => {
+      state.friends?.forEach((friend) => {
+        if (action.payload.uid === friend.user.uid) {
+          return (friend.notifications = 0);
+        } else {
+          return friend;
+        }
+      });
+    },
     addFierndToList: (state, action) => {
       state.friends?.unshift(action.payload);
     },
@@ -89,5 +129,7 @@ export const {
   setIsTyping,
   updateSeenMessages,
   addFierndToList,
+  updateNotifications,
+  resetNotifications,
 } = chatSlice.actions;
 export default chatSlice.reducer;
